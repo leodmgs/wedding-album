@@ -9,3 +9,5 @@ flask_session
 boto3
 botocore
 pyopenssl
+gunicorn
+manage

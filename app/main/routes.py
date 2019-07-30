@@ -35,7 +35,6 @@ def index():
                 sort_filter = "counter_like"
                 sort_direction = -1
 
-        print(sort_filter + ", " + str(sort_direction))
         sort_params = [(sort_filter, sort_direction)]
         query = {'accepted': True}
         photos_id = DB.find_sort("photos", query, sort_params)
