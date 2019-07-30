@@ -5,7 +5,7 @@ from app.main.database import DB
 from app.config import SECRET_KEY
 
 
-def create_app(config):
+def create_app(config=None):
     app = Flask(__name__)
     session = Session()
     app.config['SESSION_TYPE'] = 'filesystem'
