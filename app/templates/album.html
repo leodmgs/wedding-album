@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <link rel="icon" href="{{ url_for('static', filename='/img/favicons/favicon.ico') }}">
+  <title>Album</title>
+  <!-- External Styles -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!-- Custom Styles -->
+  <link href="{{ url_for('static', filename='css/album.css') }}" rel="stylesheet">
+  <!-- Script -->
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+  <script src="{{ url_for('static', filename='js/album.js') }}"></script>
+</head>
+<body>
+<!--  Header of the page, including toggle button and other options  -->
+<header>
+  <div class="collapse bg-dark" id="navbarHeader">
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-8 col-md-7 py-4">
+          <h4 class="text-white">About</h4>
+          <p class="text-muted">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+        </div>
+        <div class="col-sm-4 offset-md-1 py-4">
+          <h4 class="text-white">Menu</h4>
+          <ul class="nav flex-column nav-pills" id="pills-tab" role="tablist" aria-orientation="vertical">
+            <li><a href="{{ url_for('main.index') }}" id="home-tab" class="text-white" >Home</a></li>
+            <li><a href="{{ url_for('main.pending') }}" id="requests-tab" class="text-white">Publish Requests</a></li>
+            <li><a href="{{ url_for('main.logout') }}" class="text-white">Sign out</a></li>
+          </ul>
+
+          <h4 class="text-white mt-4">Contact</h4>
+          <ul class="list-unstyled">
+            <li><a href="#" class="text-white">Social Network</a></li>
+            <li><a href="#" class="text-white">Email me!</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="navbar navbar-dark bg-dark box-shadow">
+    <div class="container d-flex justify-content-between">
+      <a href="#" class="navbar-brand d-flex align-items-center">
+        <strong>Album</strong>
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </div>
+  </div>
+</header>
+<!-- Center of the page, including upload and photo grid section -->
+<main role="main">
+
+  <div id="menu-content">
+
+    {% if to_review %}
+
+    <div id="requests">
+      <div>
+        <div class="jumbotron text-center">
+          <h1 class="jumbotron-heading">Publish Requests</h1>
+          <p class="lead text-muted">The photos below have been submitted and require approval to enter in the public album.</p>
+        </div>
+
+        {% if total > 0 %}
+        <div class="w-50 mx-auto">
+          <div class="carousel-container mx-auto">
+            <div id="carousel-photos" class="carousel slide carousel-photos" data-ride="carousel" data-interval="false">
+              <div class="carousel-inner">
+                {% for i in range(0, total) %}
+                <div {% if i == 0 %} class="carousel-item active" {% else %} class="carousel-item" {% endif %} >
+                  <img id="{{ photos[i]['_id'] }}" class="carousel-image d-block mx-auto" src="{{ storage_url + photos[i]['filename'] }}">
+                  <div class="d-flex mt-1 justify-content-center">
+                    <form>
+                      <button type="submit" class="btn mr-4 btn-outline-success" formaction="/review/accept/{{ photos[i]['filename'] }}">Accept</button>
+                      <button type="submit" class="btn btn-outline-danger" formaction="/review/reject/{{ photos[i]['filename'] }}">Reject</button>
+                    </form>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+              <a class="carousel-control-prev" href="#carousel-photos" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+              </a>
+              <a class="carousel-control-next" href="#carousel-photos" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+              </a>
+            </div>
+          </div>
+        </div>
+        {% else %}
+
+        <div class="d-flex justify-content-center">
+          <div class="text-center">
+            <img src="{{ url_for('static', filename='img/send-images.png') }}" class="rounded" alt="...">
+            <p class="lead text-muted">There are no pending requests! :)</p>
+            <p class="lead text-muted"><a href="{{ url_for('main.index') }}">Back home</a></p>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% else %}
+
+    <div id="home" >
+      <!-- Album options: published photos, add new photo and review requests - if admin. -->
+      <section class="jumbotron text-center">
+        <div class="container">
+          <h1 class="jumbotron-heading">Wedding Album</h1>
+          <p class="lead text-muted">Special memories of an unforgettable wedding.</p>
+          <p>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#uploadModal">
+              Add Photo
+            </button>
+          </p>
+        </div>
+      </section>
+      <!-- Upload Modal -->
+      <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="uploadPhotoModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <form method="POST" action="/u" enctype="multipart/form-data">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="uploadPhotoModalLabel">Add Photo</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <div class="form-group files">
+                  <!-- TODO: multiple files: <input type="file" class="form-control" multiple=""> -->
+                  <input type="file" name="user_photo" class="form-control">
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary">Submit</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+      <!-- Photo Modal -->
+      <div class="modal fade" id="photoModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-body">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+              <img id="modal-image" class="card-img-top" src="">
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Photo Grid -->
+      <div class="album py-2 bg-light">
+        <div class="container">
+          {% if total == 0 %}
+          <div class="d-flex justify-content-center">
+            <div class="text-center">
+              <img src="{{ url_for('static', filename='img/send-images.png') }}" class="rounded" alt="...">
+              <p class="lead text-muted">This collection is empty! Start adding some amazing photos.</p>
+            </div>
+          </div>
+          {% else %}
+          <div class="dropdown show mb-4">
+            <a id="sort-anchor" class="btn btn-secondary dropdown-toggle" data-api="{{api_address}}" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sort by: Newest</a>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+              <a id="sort-newest" class="dropdown-item" href="#">Newest</a>
+              <a id="sort-oldest" class="dropdown-item" href="#">Oldest</a>
+              <a id="sort-rating" class="dropdown-item" href="#">Rating</a>
+            </div>
+          </div>
+          <div class="row">
+            {% for photo in photos %}
+            <div class="col-md-4">
+              <div class="card mb-4 box-shadow">
+                <img id="{{ photo['_id'] }}" class="card-img-top" src="{{ storage_url + photo['filename'] }}">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                      <button class="btn-like" id="btn-like-{{ photo['_id'] }}" onclick="add_like('{{ photo['_id'] }}','{{ api_address }}')">
+                        <i class="fa fa-heart mr-2"></i>
+                        <span id="counter-like-{{ photo['_id'] }}" class="text-muted unliked">{{ photo['counter_like'] | int }}</span>
+                      </button>
+                    </div>
+                    <span class="text-muted"><small>{{ photo['created_at'].strftime("%B %-d, %Y %-I:%M %p") }}</small></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    {% endif %}
+
+  </div>
+
+</main>
+<!-- Page footer -->
+<footer class="text-muted">
+  <div class="container">
+    <p class="float-right">
+      <a href="#">Back to top</a>
+    </p>
+    <p class="mt-4 text-muted">&copy; 2019</p>
+  </div>
+</footer>
+<!-- Static scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/holder/2.9.6/holder.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</body>
+</html>
