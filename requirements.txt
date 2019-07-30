@@ -8,3 +8,4 @@ flask-bootstrap
 flask_session
 boto3
 botocore
+pyopenssl

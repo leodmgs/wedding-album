@@ -11,8 +11,6 @@ def create_app(config):
     app.config['SESSION_TYPE'] = 'filesystem'
     app.config['SECRET_KEY'] = SECRET_KEY
     app.config.from_object("app.config")
-    # TODO: to test!
-    app.jinja_env.cache = {}
     session.init_app(app)
     DB.init()
     Bootstrap(app)
@@ -23,3 +21,4 @@ def create_app(config):
 def register_blueprints(app):
     from app.main import bp as main_bp
     app.register_blueprint(main_bp)
+
