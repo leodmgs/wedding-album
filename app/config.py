@@ -7,5 +7,5 @@ S3_LOCATION = 'https://{}.s3-sa-east-1.amazonaws.com/'.format(S3_BUCKET_NAME)
 
 SECRET_KEY = urandom(32)
 DEBUG = True
-API_ADDRESS = "http://localhost"
+API_ADDRESS = "https://enigmatic-mountain-68956.herokuapp.com"
 PORT = 5000
