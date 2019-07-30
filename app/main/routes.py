@@ -1,7 +1,6 @@
 from flask import render_template, request, session, redirect, url_for
 from bson import ObjectId
 from bcrypt import hashpw, gensalt
-from datetime import datetime
 
 from app.config import S3_LOCATION, API_ADDRESS, PORT
 from app.main.database import DB
@@ -22,7 +21,6 @@ def allowed_file(filename):
 @bp.route('/')
 def index():
     if 'email' in session:
-        print(request.args.get("sort"))
         photos_collection = DB.collection("photos")
         if photos_collection.count() == 0:
             return render_template('album.html', total=0, to_review=False)
