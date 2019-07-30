@@ -1,0 +1,10 @@
+bson
+werkzeug
+flask
+pymongo
+flask-pymongo
+bcrypt
+flask-bootstrap
+flask_session
+boto3
+botocore
