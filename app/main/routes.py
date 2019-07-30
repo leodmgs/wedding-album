@@ -24,10 +24,30 @@ def index():
         photos_collection = DB.collection("photos")
         if photos_collection.count() == 0:
             return render_template('album.html', total=0, to_review=False)
-        # FIXME: move to database class
-        photos_id = photos_collection.find({'accepted': True}).sort('created_at', -1)
+
+        sort_arg = request.args.get("sort")
+        sort_filter = "created_at"
+        sort_direction = -1
+        if sort_arg:
+            if sort_arg.lower() == "oldest":
+                sort_direction = 1
+            if sort_arg.lower() == "rating":
+                sort_filter = "counter_like"
+                sort_direction = -1
+
+        print(sort_filter + ", " + str(sort_direction))
+        sort_params = [(sort_filter, sort_direction)]
+        query = {'accepted': True}
+        photos_id = DB.find_sort("photos", query, sort_params)
+
         if photos_id.count() == 0:
             return render_template('album.html', total=0, to_review=False)
+
+        # request.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        # request.headers["Pragma"] = "no-cache"
+        # request.headers["Expires"] = "0"
+        # request.headers['Cache-Control'] = 'public, max-age=0'
+
         api_address = str(API_ADDRESS) + ':' + str(PORT)
         return render_template('album.html', photos=photos_id, api_address=api_address, storage_url=str(S3_LOCATION),
                                total=photos_id.count(), to_review=False)

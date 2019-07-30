@@ -32,8 +32,8 @@ class DB(object):
         return DB.DATABASE[collection].find(query).limit(limit)
 
     @staticmethod
-    def find_sort_limit(collection, query, sort, limit):
-        return DB.DATABASE[collection].find(query).sort(sort).limit(limit)
+    def find_sort(collection, query, sort):
+        return DB.DATABASE[collection].find(query).sort(sort)
 
     @staticmethod
     def validate(collection, query):
